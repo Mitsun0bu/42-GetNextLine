@@ -6,7 +6,7 @@
 /*   By: llethuil <llethuil@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/02 15:41:51 by llethuil          #+#    #+#             */
-/*   Updated: 2021/12/02 15:54:42 by llethuil         ###   ########lyon.fr   */
+/*   Updated: 2021/12/05 11:23:56 by llethuil         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,40 +32,29 @@ char	*get_next_line(int fd)
 
 char	*ft_get_line(char *line, char *buff, int fd)
 {
-	int	read_ret;
+	int		read_ret;
+	char	*buff_rest;
 
 	read_ret = 1;
 	while (read_ret > 0)
 	{
 		line = ft_strjoin(line, buff);
 		if (!line)
-		{
-			free (line);
 			return (NULL);
-		}
 		if (ft_position_nl(buff) != -1)
 		{
-			ft_save_rest(buff, &buff[ft_position_nl(buff) + 1]);
+			buff_rest = &buff[ft_position_nl(buff) + 1];
+			while (*buff_rest)
+				*buff++ = *buff_rest++;
+			*buff = '\0';
 			return (line);
 		}
 		read_ret = read(fd, buff, BUFFER_SIZE);
 		buff[read_ret] = '\0';
 		if (read_ret == -1)
-		{
 			free (line);
+		if (read_ret == -1)
 			return (NULL);
-		}
 	}
 	return (line);
-}
-
-void	*ft_save_rest(char *buff, char *shifted_buff)
-{
-	int	i;
-
-	i = 0;
-	while (*shifted_buff)
-		buff[i++] = *shifted_buff++;
-	buff[i] = '\0';
-	return (buff);
 }

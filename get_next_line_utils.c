@@ -6,7 +6,7 @@
 /*   By: llethuil <llethuil@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/17 17:17:42 by llethuil          #+#    #+#             */
-/*   Updated: 2021/12/02 15:45:23 by llethuil         ###   ########lyon.fr   */
+/*   Updated: 2021/12/05 11:24:06 by llethuil         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,63 +43,28 @@ int	ft_position_nl(char *str)
 char	*ft_strjoin(char *line, char *buff)
 {
 	char	*joined;
+	int		buff_size;
+	int		i_l;
+	int		i_b;
 
-	if (!line || !buff)
-		return (NULL);
-	joined = malloc(sizeof(char) * (ft_len_malloc(line, buff) + 1));
+	if (ft_position_nl(buff) != -1)
+		buff_size = ft_position_nl(buff) + 1;
+	else
+		buff_size = ft_strlen(buff);
+	joined = malloc(sizeof(char) * (ft_strlen(line) + buff_size + 1));
 	if (!joined)
 		return (NULL);
-	joined = ft_fill_joined(line, buff, joined);
-	return (joined);
-}
-
-int	ft_len_malloc(char *line, char *buff)
-{
-	int		i_l;
-	int		i_b;
-	int		len;
-
-	i_l = 0;
-	while (line && line[i_l])
-		i_l++;
+	i_l = -1;
+	while (line[++i_l])
+		joined[i_l] = line[i_l];
+	free(line);
 	i_b = 0;
-	while (buff && buff[i_b])
+	while (buff[i_b])
 	{
-		i_b++;
-		if (buff[i_b] == '\n')
-		{
-			i_b++;
+		joined[i_l++] = buff[i_b++];
+		if (buff[i_b - 1] == '\n')
 			break ;
-		}
 	}
-	len = i_l + i_b;
-	return (len);
-}
-
-char	*ft_fill_joined(char *line, char *buff, char *joined)
-{
-	int		j;
-	int		i_l;
-	int		i_b;
-
-	i_l = 0;
-	j = 0;
-	while (line && line[i_l])
-			joined[j++] = line[i_l++];
-	if (line)
-		free(line);
-	i_b = 0;
-	while (buff && buff[i_b])
-	{
-		joined[j] = buff[i_b];
-		if (buff[i_b] == '\n')
-		{
-			joined[j++] = '\n';
-			break ;
-		}
-		j++;
-		i_b++;
-	}
-	joined[j] = '\0';
+	joined[i_l] = '\0';
 	return (joined);
 }

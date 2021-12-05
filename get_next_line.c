@@ -6,7 +6,7 @@
 /*   By: llethuil <llethuil@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/17 17:02:15 by llethuil          #+#    #+#             */
-/*   Updated: 2021/12/02 15:48:56 by llethuil         ###   ########lyon.fr   */
+/*   Updated: 2021/12/05 11:24:05 by llethuil         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,40 +32,29 @@ char	*get_next_line(int fd)
 
 char	*ft_get_line(char *line, char *buff, int fd)
 {
-	int	read_ret;
+	int		read_ret;
+	char	*shifted_buff;
 
 	read_ret = 1;
 	while (read_ret > 0)
 	{
 		line = ft_strjoin(line, buff);
 		if (!line)
-		{
-			free (line);
 			return (NULL);
-		}
 		if (ft_position_nl(buff) != -1)
 		{
-			ft_save_rest(buff, &buff[ft_position_nl(buff) + 1]);
+			shifted_buff = &buff[ft_position_nl(buff) + 1];
+			while (*shifted_buff)
+				*buff++ = *shifted_buff++;
+			*buff = '\0';
 			return (line);
 		}
 		read_ret = read(fd, buff, BUFFER_SIZE);
-		buff[read_ret] = '\0';
 		if (read_ret == -1)
-		{
 			free (line);
+		if (read_ret == -1)
 			return (NULL);
-		}
+		buff[read_ret] = '\0';
 	}
 	return (line);
-}
-
-void	*ft_save_rest(char *buff, char *shifted_buff)
-{
-	int	i;
-
-	i = 0;
-	while (*shifted_buff)
-		buff[i++] = *shifted_buff++;
-	buff[i] = '\0';
-	return (buff);
 }
